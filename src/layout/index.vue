@@ -5,51 +5,50 @@
       class="drawer-bg"
       @click="handleClickOutside"
     /> -->
+
     <Sidebar class="sidebar-container" />
-    <div class="main-container">
-      <div>
+    <div :class="{ hasTagsView: showTagsView }" class="main-container">
+      <div :class="{ 'fixed-header': fixedHeader }">
         <Navbar />
         <TagsView v-if="showTagsView" />
       </div>
       <AppMain />
-      <!-- <RightPanel> -->
-      <!-- <Settings /> -->
-      <!-- </RightPanel> -->
+      <RightPanel>
+        <Settings />
+      </RightPanel>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, unref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { usePermissionStoreWithOut } from "@/store/modules/permission";
 import { Menu } from "@/router/types";
+import { useAppSetting } from "@/hooks/setting/useAppSetting";
 
-// import { RightPanel } from "@/components/RightPanel";
-import { AppMain, Sidebar, TagsView, Navbar } from "./components";
-
-import { useAppStoreWithOut } from "@/store/modules/app";
-const appStore = useAppStoreWithOut();
+import { RightPanel } from "@/components/RightPanel";
+import { AppMain, Sidebar, TagsView, Navbar, Settings } from "./components";
 
 const currentRoute = useRoute();
 const asyncRouteStore = usePermissionStoreWithOut();
 const menus = ref<Menu[]>([]);
 
-const menuSetting = computed(() => {
-  return appStore.getProjectConfig;
-});
+const { getCollapsed, getHeaderFixed, getShowTagsView } = useAppSetting();
 
 const classObj = computed(() => {
   return {
-    showSidebar: !menuSetting.value.collapsed,
-    hideSidebar: menuSetting.value.collapsed,
+    showSidebar: !unref(getCollapsed),
+    hideSidebar: unref(getCollapsed),
   };
 });
 
 const showTagsView = computed(() => {
-  return appStore.getProjectConfig.showTagsView;
+  return unref(getShowTagsView);
 });
-
+const fixedHeader = computed(() => {
+  return unref(getHeaderFixed);
+});
 watch(
   () => currentRoute.fullPath,
   () => {
@@ -90,5 +89,8 @@ onMounted(() => {
   z-index: 9;
   width: calc(100% - #{210px});
   transition: width 0.28s;
+}
+.hideSidebar .fixed-header {
+  width: calc(100% - 54px);
 }
 </style>

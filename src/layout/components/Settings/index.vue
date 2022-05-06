@@ -5,81 +5,93 @@
 
       <div class="drawer-item">
         <span>Theme Color</span>
-        <theme-picker
+        <!-- <ThemePicker
           style="float: right; height: 26px; margin: -3px 8px 0 0"
           @change="themeChange"
-        />
+        /> -->
       </div>
 
       <div class="drawer-item">
         <span>Open Tags-View</span>
-        <el-switch v-model="tagsView" class="drawer-switch" />
-      </div>
-
-      <div class="drawer-item">
-        <span>Fixed Header</span>
-        <el-switch v-model="fixedHeader" class="drawer-switch" />
+        <el-switch v-model="showTagsView" class="drawer-switch" />
       </div>
 
       <div class="drawer-item">
         <span>Sidebar Logo</span>
-        <el-switch v-model="sidebarLogo" class="drawer-switch" />
+        <el-switch v-model="showSidebarLogo" class="drawer-switch" />
+      </div>
+
+      <div class="drawer-item">
+        <span>Fixed Header </span>
+        <el-switch v-model="fixedHeader" class="drawer-switch" />
       </div>
     </div>
   </div>
 </template>
 
-<script>
-import ThemePicker from "@/components/ThemePicker";
+<script lang="ts" setup>
+import { computed, unref } from "vue";
+import { useAppSetting } from "@/hooks/setting/useAppSetting";
+import { useAppStore } from "@/store/modules/app";
 
-export default {
-  components: { ThemePicker },
-  data() {
-    return {};
+const {
+  getAppConfig,
+  getHeaderSetting,
+  getHeaderFixed,
+  getShowLogo,
+  getShowTagsView,
+} = useAppSetting();
+
+const appStore = useAppStore();
+
+const appConfig = computed(() => {
+  return unref(getAppConfig);
+});
+
+const headerSetting = computed(() => {
+  return unref(getHeaderSetting);
+});
+
+const showTagsView = computed({
+  get: () => unref(getShowTagsView),
+  set: (val: boolean) => {
+    changeTagsView(val);
   },
-  computed: {
-    fixedHeader: {
-      get() {
-        return this.$store.state.settings.fixedHeader;
-      },
-      set(val) {
-        this.$store.dispatch("settings/changeSetting", {
-          key: "fixedHeader",
-          value: val,
-        });
-      },
-    },
-    tagsView: {
-      get() {
-        return this.$store.state.settings.tagsView;
-      },
-      set(val) {
-        this.$store.dispatch("settings/changeSetting", {
-          key: "tagsView",
-          value: val,
-        });
-      },
-    },
-    sidebarLogo: {
-      get() {
-        return this.$store.state.settings.sidebarLogo;
-      },
-      set(val) {
-        this.$store.dispatch("settings/changeSetting", {
-          key: "sidebarLogo",
-          value: val,
-        });
-      },
-    },
+});
+
+const showSidebarLogo = computed({
+  get: () => unref(getShowLogo),
+  set: (val: boolean) => {
+    changeSidebarLogo(val);
   },
-  methods: {
-    themeChange(val) {
-      this.$store.dispatch("settings/changeSetting", {
-        key: "theme",
-        value: val,
-      });
-    },
+});
+
+const fixedHeader = computed({
+  get: () => unref(getHeaderFixed),
+  set: (val: boolean) => {
+    changeFixedHeader(val);
   },
+});
+
+const changeTagsView = (value: boolean) => {
+  appStore.setAppSetting({
+    ...appConfig.value,
+    showTagsView: value,
+  });
+};
+
+const changeSidebarLogo = (value: boolean) => {
+  appStore.setAppSetting({
+    ...appConfig.value,
+    showLogo: value,
+  });
+};
+
+const changeFixedHeader = (value: boolean) => {
+  appStore.setHeaderSetting({
+    ...headerSetting.value,
+    fixed: value,
+  });
 };
 </script>
 

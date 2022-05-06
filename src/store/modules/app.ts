@@ -1,12 +1,16 @@
 import { defineStore } from "pinia";
-import { ProjectConfig } from "@/types/project";
+import { AppConfig, HeaderSetting } from "@/types/app";
 import { store } from "@/store";
+import appSetting from "@/settings/appSetting";
+import { deepMerge } from "@/utils";
 
 interface AppState {
   // Page loading status
   pageLoading: boolean;
-  // project config
-  projectConfig: ProjectConfig | null;
+  // app config
+  appSetting: AppConfig;
+  //顶部设置
+  headerSetting: HeaderSetting;
 }
 
 let timeId: TimeoutHandle;
@@ -14,19 +18,25 @@ export const useAppStore = defineStore({
   id: "app",
   state: (): AppState => ({
     pageLoading: false,
-    projectConfig: {
-      showLogo: true,
-      collapsed: false,
-      openKeepAlive: true,
-      showTagsView: true,
+    appSetting,
+    headerSetting: {
+      //背景色
+      bgColor: "#fff",
+      //固定顶部
+      fixed: true,
+      //显示重载按钮
+      isReload: true,
     },
   }),
   getters: {
     getPageLoading(): boolean {
       return this.pageLoading;
     },
-    getProjectConfig(): ProjectConfig {
-      return this.projectConfig || ({} as ProjectConfig);
+    getAppConfig(): AppConfig {
+      return this.appSetting || ({} as AppConfig);
+    },
+    getHeaderSetting(): HeaderSetting {
+      return this.headerSetting || ({} as HeaderSetting);
     },
   },
   actions: {
@@ -34,9 +44,15 @@ export const useAppStore = defineStore({
       this.pageLoading = loading;
     },
     setCollapsed(): void {
-      if (this.projectConfig) {
-        this.projectConfig.collapsed = !this.projectConfig?.collapsed;
+      if (this.appSetting) {
+        this.appSetting.collapsed = !this.appSetting.collapsed;
       }
+    },
+    setAppSetting(config: DeepPartial<AppConfig>): void {
+      this.appSetting = deepMerge(this.appSetting || {}, config);
+    },
+    setHeaderSetting(config: DeepPartial<HeaderSetting>): void {
+      this.headerSetting = deepMerge(this.headerSetting || {}, config);
     },
     async setPageLoadingAction(loading: boolean): Promise<void> {
       if (loading) {

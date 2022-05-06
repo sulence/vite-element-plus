@@ -20,10 +20,10 @@
 </template>
 
 <script lang="ts" setup>
-import { useRootSetting } from "@/hooks/setting/useRootSetting";
+import { useAppSetting } from "@/hooks/setting/useAppSetting";
 import { computed, unref } from "vue";
 
-const { getOpenKeepAlive } = useRootSetting();
+const { getOpenKeepAlive } = useAppSetting();
 
 const openCache = computed(() => unref(getOpenKeepAlive));
 // const store = useStore();

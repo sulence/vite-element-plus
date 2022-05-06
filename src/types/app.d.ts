@@ -1,6 +1,6 @@
 import { PermissionModeEnum } from "@/enums/appEnum";
 
-export interface ProjectConfig {
+export interface AppConfig {
   // Whether to display the logo
   showLogo: boolean;
   //
@@ -11,4 +11,10 @@ export interface ProjectConfig {
   openKeepAlive: boolean;
   // Permission mode
   permissionMode: PermissionModeEnum;
+}
+
+export interface HeaderSetting {
+  bgColor: string;
+  fixed: boolean;
+  isReload: boolean;
 }

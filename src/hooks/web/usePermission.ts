@@ -1,6 +1,6 @@
 import { PermissionModeEnum } from "@/enums/appEnum";
 import { RoleEnum } from "@/enums/roleEnum";
-import projectSetting from "@/settings/projectSetting";
+import projectSetting from "@/settings/appSetting";
 import { usePermissionStore } from "@/store/modules/permission";
 import { useUserStore } from "@/store/modules/user";
 import { isArray } from "@/utils/is";

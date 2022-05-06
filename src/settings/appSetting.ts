@@ -1,7 +1,7 @@
 import { PermissionModeEnum } from "@/enums/appEnum";
-import { ProjectConfig } from "@/types/project";
+import { AppConfig } from "@/types/app";
 
-const setting: ProjectConfig = {
+const setting: AppConfig = {
   // Whether to display the logo
   showLogo: true,
   // Menu collapse

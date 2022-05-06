@@ -26,7 +26,7 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref, unref, watch } from "vue";
 import { useRoute } from "vue-router";
-import { useRootSetting } from "@/hooks/setting/useRootSetting";
+import { useAppSetting } from "@/hooks/setting/useAppSetting";
 import variables from "@/styles/variables.module.scss";
 import { usePermissionStoreWithOut } from "@/store/modules/permission";
 import { Menu } from "@/router/types";
@@ -49,7 +49,7 @@ onMounted(() => {
   updateMenu();
 });
 
-const { getCollapsed, getShowLogo } = useRootSetting();
+const { getCollapsed, getShowLogo } = useAppSetting();
 const showLogo = computed(() => unref(getShowLogo));
 const isCollapse = computed(() => unref(getCollapsed));
 
