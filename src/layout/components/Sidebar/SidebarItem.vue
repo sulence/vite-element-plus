@@ -6,16 +6,16 @@
       v-if="theOnlyOneChild.meta && !item.hidden"
       :to="resolvePath(theOnlyOneChild.path)"
     >
-      <el-menu-item :index="resolvePath(theOnlyOneChild.path)">
-        <template #title
-          ><svg
-            v-if="theOnlyOneChild.meta.icon"
-            class="svg-icon"
-            aria-hidden="true"
-            font-size="16px"
-          >
+      <el-menu-item
+        :index="resolvePath(theOnlyOneChild.path)"
+        :class="{ 'submenu-title-noDropdown': !isNest }"
+      >
+        <el-icon v-if="theOnlyOneChild.meta.icon">
+          <svg class="svg-icon" aria-hidden="true" font-size="16px">
             <use :xlink:href="iconName(theOnlyOneChild.meta.icon)" />
           </svg>
+        </el-icon>
+        <template #title>
           <span v-if="theOnlyOneChild.meta.title">
             {{ theOnlyOneChild.meta.title }}
           </span>
@@ -31,14 +31,11 @@
     popper-append-to-body
   >
     <template #title>
-      <svg
-        v-if="item.meta && item.meta.icon"
-        class="svg-icon"
-        aria-hidden="true"
-        font-size="16px"
-      >
-        <use :xlink:href="iconName(item.meta.icon)" />
-      </svg>
+      <el-icon v-if="item.meta && item.meta.icon">
+        <svg class="svg-icon" aria-hidden="true" font-size="16px">
+          <use :xlink:href="iconName(item.meta.icon)" />
+        </svg>
+      </el-icon>
       <span v-if="item.meta && item.meta.title">{{ item.meta.title }}</span>
     </template>
     <sidebar-item
@@ -48,7 +45,6 @@
       :item="child"
       :base-path="resolvePath(child.path)"
       class="nest-menu"
-      :is-collapse="isCollapse"
     />
   </el-sub-menu>
 </template>
@@ -57,7 +53,7 @@
 import path from "path-browserify";
 import { computed, PropType } from "vue";
 import { isExternal } from "@/utils/validate";
-import { SidebarItemLink } from "./";
+import { SidebarItemLink } from ".";
 import { AppRouteRecordRaw } from "@/router/types";
 
 const props = defineProps({
@@ -69,9 +65,9 @@ const props = defineProps({
     type: String,
     required: true,
   },
-  isCollapse: {
+  isNest: {
     type: Boolean,
-    required: false,
+    default: false,
   },
 });
 

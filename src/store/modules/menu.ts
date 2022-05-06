@@ -52,26 +52,12 @@ export const generatorDynamicRouter: RouteItem[] = [
   {
     path: "/about",
     name: "about",
-    component: "LAYOUT",
+    component: "/AboutView",
     meta: {
-      sort: 10,
       isRoot: true,
-      activeMenu: "about_index",
       icon: "system",
-      title: "about",
+      title: "关于",
     },
-    children: [
-      {
-        path: "index",
-        name: `about_index`,
-        meta: {
-          title: "关于",
-          activeMenu: "about_index",
-          icon: "system",
-        },
-        component: "/AboutView",
-      },
-    ],
   },
   {
     path: "/form",
@@ -126,7 +112,6 @@ export const generatorDynamicRouter: RouteItem[] = [
         component: "System/Menu",
         meta: {
           title: "菜单管理",
-          icon: "system",
         },
       },
       {
@@ -135,7 +120,6 @@ export const generatorDynamicRouter: RouteItem[] = [
         component: "System/User",
         meta: {
           title: "用户管理",
-          icon: "system",
         },
       },
     ],

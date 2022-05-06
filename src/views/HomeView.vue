@@ -2,6 +2,46 @@
   <div class="">
     <div class="test">Home</div>
     <div class="">{{ flag.id }}</div>
+
+    <div class="">
+      <el-radio-group v-model="isCollapse" style="margin-bottom: 20px">
+        <el-radio-button :label="false">expand</el-radio-button>
+        <el-radio-button :label="true">collapse</el-radio-button>
+      </el-radio-group>
+      <el-menu
+        default-active="2"
+        class="el-menu-vertical-demo"
+        :collapse="isCollapse"
+      >
+        <template v-for="item in list" :key="item.title">
+          <el-sub-menu v-if="item.child" index="1">
+            <template #title>
+              <el-icon>
+                <svg class="svg-icon" aria-hidden="true" font-size="16px">
+                  <use xlink:href="#icon-dashboard" />
+                </svg>
+              </el-icon>
+              <span>{{ item.title }}</span>
+            </template>
+            <el-menu-item
+              v-for="child in item.child"
+              :key="child.title"
+              index="2-1"
+              >{{ child.title }}</el-menu-item
+            >
+          </el-sub-menu>
+
+          <el-menu-item v-else index="2">
+            <el-icon>
+              <svg class="svg-icon" aria-hidden="true" font-size="16px">
+                <use xlink:href="#icon-dashboard" />
+              </svg>
+            </el-icon>
+            <template #title>{{ item.title }}</template>
+          </el-menu-item>
+        </template>
+      </el-menu>
+    </div>
     <Test title="首页"></Test>
     <el-button>I am ElButton {{ data }}</el-button>
     <el-button @click="open">OPEN</el-button>
@@ -65,6 +105,17 @@ let flag = ref<TestProps[]>([]);
 
 const isCollapse = ref(false);
 let icon = ref<string>("");
+const list = ref([
+  {
+    icon: "#icon-dashboard",
+    title: "首页",
+    child: [
+      { icon: "", title: "首页1" },
+      { icon: "", title: "首页2" },
+    ],
+  },
+  { icon: "#icon-dashboard", title: "关于" },
+]);
 
 const selected = (name: string) => {
   icon.value = name;
