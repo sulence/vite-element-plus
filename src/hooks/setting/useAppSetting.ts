@@ -14,6 +14,10 @@ export function useAppSetting() {
 
   const getOpenKeepAlive = computed(() => appStore.getAppConfig.openKeepAlive);
 
+  //
+
+  const getDarkMode = computed(() => appStore.getDarkMode);
+
   return {
     getAppConfig,
     getShowLogo,
@@ -22,5 +26,6 @@ export function useAppSetting() {
     getHeaderSetting,
     getHeaderFixed,
     getOpenKeepAlive,
+    getDarkMode,
   };
 }

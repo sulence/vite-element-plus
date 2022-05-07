@@ -3,10 +3,13 @@ import { AppConfig, HeaderSetting } from "@/types/app";
 import { store } from "@/store";
 import appSetting from "@/settings/appSetting";
 import { deepMerge } from "@/utils";
+import { ThemeEnum } from "@/enums/appEnum";
 
 interface AppState {
   // Page loading status
   pageLoading: boolean;
+  //
+  darkMode: ThemeEnum;
   // app config
   appSetting: AppConfig;
   //顶部设置
@@ -18,6 +21,7 @@ export const useAppStore = defineStore({
   id: "app",
   state: (): AppState => ({
     pageLoading: false,
+    darkMode: ThemeEnum.DARK,
     appSetting,
     headerSetting: {
       //背景色
@@ -37,6 +41,9 @@ export const useAppStore = defineStore({
     },
     getHeaderSetting(): HeaderSetting {
       return this.headerSetting || ({} as HeaderSetting);
+    },
+    getDarkMode(): "light" | "dark" | string {
+      return this.darkMode;
     },
   },
   actions: {

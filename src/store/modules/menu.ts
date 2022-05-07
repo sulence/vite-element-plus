@@ -25,7 +25,7 @@ export const generatorDynamicRouter: RouteItem[] = [
       {
         path: "console",
         name: "dashboard_console",
-        component: "/HomeView",
+        component: "/Dashboard/index",
         meta: {
           title: "主控台",
         },
@@ -33,7 +33,7 @@ export const generatorDynamicRouter: RouteItem[] = [
       {
         path: "monitor",
         name: "dashboard_monitor",
-        component: "/AboutView",
+        component: "/HomeView",
         meta: {
           title: "监控页",
         },

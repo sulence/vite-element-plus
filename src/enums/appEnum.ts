@@ -1,3 +1,9 @@
+// menu theme enum
+export enum ThemeEnum {
+  DARK = "dark",
+  LIGHT = "light",
+}
+
 /**
  * 权限模式
  */
