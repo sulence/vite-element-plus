@@ -1,5 +1,5 @@
 <template>
-  <div class="">
+  <div class="app-container">
     <div class="test">about</div>
     <div class="">{{ flag }}</div>
     <router-link to="/">test</router-link>

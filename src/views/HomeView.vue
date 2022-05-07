@@ -1,5 +1,5 @@
 <template>
-  <div class="">
+  <div class="app-container">
     <div class="test">Home</div>
     <div class="">{{ flag.id }}</div>
 

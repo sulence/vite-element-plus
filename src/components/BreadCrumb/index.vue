@@ -18,6 +18,7 @@
 <script lang="ts" setup>
 import { onBeforeMount, ref, watch } from "vue";
 import { RouteLocationMatched, useRoute, useRouter } from "vue-router";
+import { compile } from "path-to-regexp";
 const router = useRouter();
 const currentRoute = useRoute();
 
@@ -31,9 +32,15 @@ const handleLink = (item: any) => {
     });
     return;
   }
-  // router.push(pathCompile(path)).catch((err) => {
-  //   console.warn(err);
-  // });
+  router.push(pathCompile(path)).catch((err) => {
+    console.warn(err);
+  });
+};
+
+const pathCompile = (path: string) => {
+  const { params } = currentRoute;
+  const toPath = compile(path);
+  return toPath(params);
 };
 
 const isDashboard = (route: RouteLocationMatched) => {
@@ -53,9 +60,9 @@ const getBreadcrumb = () => {
   );
   const frist = matched[0];
   if (!isDashboard(frist)) {
-    matched = [
-      { path: "/dashboard", meta: { title: "dashboard" } } as any,
-    ].concat(matched);
+    matched = [{ path: "/dashboard", meta: { title: "首页" } } as any].concat(
+      matched
+    );
   }
   breadcrumbs.value = matched.filter((item) => {
     return item.meta && item.meta.title && item.meta.breadcrumb !== false;
@@ -69,7 +76,6 @@ watch(
       return;
     }
     getBreadcrumb();
-    console.log(breadcrumbs);
   }
 );
 

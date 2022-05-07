@@ -51,13 +51,25 @@ export const generatorDynamicRouter: RouteItem[] = [
   },
   {
     path: "/about",
-    name: "about",
-    component: "/AboutView",
+    name: "About",
+    component: "LAYOUT",
+    redirect: "/about/index",
     meta: {
       isRoot: true,
       icon: "system",
       title: "关于",
     },
+    children: [
+      {
+        path: "index",
+        name: "about-index",
+        meta: {
+          title: "关于",
+          icon: "system",
+        },
+        component: "/AboutView",
+      },
+    ],
   },
   {
     path: "/form",

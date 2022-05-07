@@ -16,7 +16,7 @@
           </svg>
         </el-icon>
         <template #title>
-          <span v-if="theOnlyOneChild.meta.title">
+          <span>
             {{ theOnlyOneChild.meta.title }}
           </span>
         </template>
@@ -53,7 +53,7 @@
 import path from "path-browserify";
 import { computed, PropType } from "vue";
 import { isExternal } from "@/utils/validate";
-import { SidebarItemLink } from ".";
+import { SidebarItemLink } from "./";
 import { AppRouteRecordRaw } from "@/router/types";
 
 const props = defineProps({
@@ -100,6 +100,7 @@ const theOnlyOneChild = computed(() => {
   if (props.item.children) {
     for (const child of props.item.children) {
       if (!child.meta || !child.meta.hidden) {
+        child.meta.icon = props.item.meta.icon;
         return child;
       }
     }

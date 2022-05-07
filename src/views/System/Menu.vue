@@ -1,5 +1,5 @@
 <template>
-  <div class="">
+  <div class="app-container">
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button type="primary" plain size="small">新增</el-button>
