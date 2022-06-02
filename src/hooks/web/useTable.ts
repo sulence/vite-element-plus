@@ -59,11 +59,12 @@ export const useTable = (
       // 更新查询参数
       updatedTotalParam();
       Object.assign(state.totalParam, initParam);
-      const { data } = await apiUrl(state.totalParam);
-      state.tableData = isPageable ? data.dataList : data;
+      const { rows, total } = await apiUrl(state.totalParam);
+      state.tableData = rows;
+
       // 解构后台返回的分页数据(如果有分页更新分页信息)
-      const { pageNum, pageSize, total } = data;
-      isPageable && updatePageable({ pageNum, pageSize, total });
+      state.pageable.total = total;
+      // isPageable && updatePageable({ pageable.pageNum, pageable.pageSize, total });
     } catch (error) {
       console.log(error);
     }
