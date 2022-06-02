@@ -1,17 +1,7 @@
-import { RouteMeta } from "vue-router";
+import { MockMethod } from "vite-plugin-mock";
+import { resultSuccess } from "../index";
 
-export interface RouteItem {
-  path: string;
-  component: any;
-  meta: RouteMeta;
-  name?: string;
-  alias?: string | string[];
-  redirect?: string;
-  caseSensitive?: boolean;
-  children?: RouteItem[];
-}
-
-export const generatorDynamicRouter: RouteItem[] = [
+const list = [
   {
     path: "/dashboard",
     name: "Dashboard",
@@ -166,4 +156,13 @@ export const generatorDynamicRouter: RouteItem[] = [
   },
 ];
 
-export const getPermCode: string[] = ["1000", "3000", "5000"];
+export default [
+  {
+    url: "/getMenuList",
+    timeout: 1000,
+    method: "get",
+    response: () => {
+      return resultSuccess(list);
+    },
+  },
+] as MockMethod[];

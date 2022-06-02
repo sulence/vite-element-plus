@@ -6,6 +6,7 @@ import { createSvgIconsPlugin } from "vite-plugin-svg-icons";
 import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
 import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
+import { viteMockServe } from "vite-plugin-mock";
 
 function pathResolve(dir: string) {
   return resolve(process.cwd(), ".", dir);
@@ -26,6 +27,16 @@ export default defineConfig({
       iconDirs: [pathResolve("src/assets/icons/svg")],
       // 指定symbolId格式
       symbolId: "icon-[name]",
+    }),
+    viteMockServe({
+      ignore: /^\_/,
+      mockPath: "mock",
+      localEnabled: true,
+      injectCode: `
+        import { setupProdMockServer } from './mock/_createProductionServer';
+
+        setupProdMockServer();
+        `,
     }),
   ],
   resolve: {

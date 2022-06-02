@@ -6,7 +6,9 @@ import { toRaw, unref } from "vue";
 import { AppRouteRecordRaw, Menu } from "@/router/types";
 import { transformObjToRoute } from "@/router/helper/routeHelper";
 import { transformRouteToMenu } from "@/router/helper/menuHelper";
-import { generatorDynamicRouter, getPermCode } from "./menu";
+import { getPermCode } from "./menu";
+
+import { getMenuList } from "@/api/menu";
 
 interface TreeHelperConfig {
   id: string;
@@ -119,8 +121,9 @@ export const usePermissionStore = defineStore({
         // 动态获取菜单
         try {
           this.changePermissionCode();
-          accessedRouters =
-            (await generatorDynamicRouter) as AppRouteRecordRaw[];
+
+          accessedRouters = (await getMenuList()) as AppRouteRecordRaw[];
+          console.log(accessedRouters);
         } catch (error) {
           console.log(error);
         }
