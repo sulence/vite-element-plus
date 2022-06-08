@@ -1,51 +1,30 @@
+import { RouteLocationNormalized } from "vue-router";
+import { defineStore } from "pinia";
+import { toRaw } from "vue";
 import { PageEnum } from "@/enums/pageEnum";
 import { ErrorPageRoute, REDIRECT_ROUTE } from "@/router/routes/base";
-import { defineStore } from "pinia";
-import { RouteLocationNormalized, RouteLocationRaw } from "vue-router";
-import { toRaw, unref } from "vue";
-import { store } from "@/store";
 
-export interface TagView extends Partial<RouteLocationNormalized> {
+export interface TabState extends Partial<RouteLocationNormalized> {
   title?: string;
 }
 
-export interface TagsviewState {
-  cacheTabList: Set<string>;
-  visitedViews: TagView[];
-  lastDragEndIndex: number;
+export interface AppTabState {
+  visitedViews: TabState[];
   cachedViews: Set<string>;
 }
 
-const getToTarget = (tabItem: RouteLocationNormalized) => {
-  const { params, path, query } = tabItem;
-  return {
-    params: params || {},
-    path,
-    query: query || {},
-  };
-};
-
-export const useTagsviewStore = defineStore({
-  id: "app-tagsview",
-  state: (): TagsviewState => ({
-    // Tabs that need to be cached
-    cacheTabList: new Set(),
-    // multiple tab list
+export const useTabStore = defineStore({
+  id: "app-tabs",
+  state: (): AppTabState => ({
     visitedViews: [],
-    //
-    cachedViews: new Set(),
-    // Index of the last moved tab
-    lastDragEndIndex: 0,
+    cachedViews: new Set(), //  keepAlive 缓存页面
   }),
   getters: {
-    getVisitedViews(): TagView[] {
+    getVisitedViews(): TabState[] {
       return this.visitedViews;
     },
     getCachedViews(): string[] {
       return Array.from(this.cachedViews);
-    },
-    getLastDragEndIndex(): number {
-      return this.lastDragEndIndex;
     },
   },
   actions: {
@@ -67,7 +46,7 @@ export const useTagsviewStore = defineStore({
       }
       this.cachedViews = cacheMap;
     },
-    async addCachedView(route: TagView) {
+    async addView(route: TabState) {
       const { path, name, fullPath, params, query, meta } = route;
 
       // // 404  The page does not need to add a tab
@@ -126,51 +105,6 @@ export const useTagsviewStore = defineStore({
         );
       }
       this.updateCachedViews();
-      // cachedView && Persistent.setLocal(MULTIPLE_TABS_KEY, this.tabList);
-    },
-    refreshTab(view: TagView) {
-      if (view.name === null || view.name === undefined) return;
-      const hasName = this.cachedViews.has(view.name?.toString());
-      const findTab = this.getCachedViews.find(
-        (item) => item === view.name?.toString()
-      );
-      if (hasName && findTab) {
-        this.cachedViews.delete(findTab);
-      }
-    },
-    async closeTab(view: TagView) {
-      const { fullPath } = view;
-      if (view.name === null) return;
-      const index = this.visitedViews.findIndex(
-        (item) => item.fullPath === fullPath
-      );
-      index !== -1 && this.visitedViews.splice(index, 1);
-    },
-    /**
-     * Close other tabs
-     */
-    async closeOtherTabs(view: TagView) {
-      const { fullPath } = view;
-      if (view.name === null) return;
-      const index = this.visitedViews.findIndex(
-        (item) => item.fullPath === fullPath
-      );
-      if (index > -1) {
-        this.visitedViews = this.visitedViews.slice(index, index + 1);
-      } else {
-        // if index = -1, there is no cached tags
-        this.visitedViews = [];
-      }
-      this.updateCachedViews();
-    },
-    async closeAllTab() {
-      this.cachedViews = new Set();
-      this.visitedViews = [];
     },
   },
 });
-
-// Need to be used outside the setup
-export function useTagsviewStoreWithOutStore() {
-  return useTagsviewStore(store);
-}

@@ -9,7 +9,7 @@
     <RouterView>
       <template #default="{ Component, route }">
         <transition name="fade-transform" mode="out-in" appear>
-          <keep-alive v-if="openCache">
+          <keep-alive v-if="openCache" :include="getCaches">
             <component :is="Component" :key="route.fullPath" />
           </keep-alive>
           <component :is="Component" v-else :key="route.fullPath" />
@@ -20,16 +20,20 @@
 </template>
 
 <script lang="ts" setup>
-import { useAppSetting } from "@/hooks/setting/useAppSetting";
 import { computed, unref } from "vue";
+import { useAppSetting } from "@/hooks/setting/useAppSetting";
+import { useMultipleTabStore } from "@/store/modules/multipleTab";
 
 const { getOpenKeepAlive } = useAppSetting();
+const tabStore = useMultipleTabStore();
 
 const openCache = computed(() => unref(getOpenKeepAlive));
-// const store = useStore();
-// const cachedViews = () => {
-//   return store.state.tagViews.cachedViews;
-// };
+const getCaches = computed((): string[] => {
+  if (!unref(getOpenKeepAlive)) {
+    return [];
+  }
+  return tabStore.getCachedTabList;
+});
 </script>
 
 <style lang="scss" scoped>

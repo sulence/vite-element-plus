@@ -6,7 +6,7 @@
       @scroll="handleScroll"
     >
       <router-link
-        v-for="tag in visitedViews"
+        v-for="tag in getTabsState"
         ref="tag"
         :key="tag.path"
         :class="isActive(tag) ? 'active' : ''"
@@ -15,7 +15,7 @@
         @click.middle="!isAffix(tag) ? closeSelectedTag(tag) : ''"
         @contextmenu.prevent="openMenu(tag, $event)"
       >
-        {{ tag.title }}
+        {{ tag.meta?.title }}
         <span
           v-if="!isAffix(tag)"
           class="el-icon-close"
@@ -35,29 +35,25 @@
       >
         Close
       </li>
-      <li @click="closeOthersTags">Close Others</li>
-      <li @click="closeAllTags(state.selectedTag)">Close All</li>
+      <li @click="closeOthersTags(state.selectedTag)">Close Others</li>
+      <li @click="closeAllTags()">Close All</li>
     </ul>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ScrollPane } from "./";
-import {
-  computed,
-  getCurrentInstance,
-  nextTick,
-  onMounted,
-  reactive,
-  unref,
-  watch,
-} from "vue";
-import {
-  TagView,
-  useTagsviewStoreWithOutStore,
-} from "@/store/modules/tagsview";
-import { useRoute, useRouter } from "vue-router";
+import { computed, getCurrentInstance, reactive, unref, watch } from "vue";
+import { RouteMeta, useRoute, useRouter } from "vue-router";
+import type { RouteLocationNormalized } from "vue-router";
+import { useTabs } from "@/hooks/web/useTabs";
+
+import { useMultipleTabStore } from "@/store/modules/multipleTab";
+import { listenerRouteChange } from "@/utils/routeChange";
+import { REDIRECT_NAME } from "@/router/constant";
 const instance = getCurrentInstance();
+const { refreshPage, close, closeAll, closeOther } = useTabs();
+const tabStore = useMultipleTabStore();
 
 const { proxy } = instance as any;
 
@@ -65,8 +61,7 @@ const state = reactive({
   visible: false,
   top: 0,
   left: 0,
-  selectedTag: {} as TagView,
-  affixTags: [] as TagView[],
+  selectedTag: {} as RouteLocationNormalized,
   closeMenu: () => {
     state.visible = false;
   },
@@ -74,18 +69,46 @@ const state = reactive({
 
 const currentRoute = useRoute();
 const router = useRouter();
-const tagsviewStore = useTagsviewStoreWithOutStore();
 
-const visitedViews = computed(() => {
-  return tagsviewStore.getVisitedViews;
+const getTabsState = computed(() => {
+  return tabStore.getTabList.filter((item) => !item.meta?.hideTab);
 });
 
-watch(
-  () => currentRoute.fullPath,
-  () => {
-    addTags();
+listenerRouteChange((route) => {
+  const { name } = route;
+  if (name === REDIRECT_NAME || !route) {
+    return;
   }
-);
+  const { path, fullPath, meta = {} } = route;
+  const { currentActiveMenu, hideTab } = meta as RouteMeta;
+  const isHide = !hideTab ? null : currentActiveMenu;
+
+  if (isHide) {
+    const findParentRoute = router
+      .getRoutes()
+      .find((item) => item.path === currentActiveMenu);
+
+    findParentRoute &&
+      tabStore.addTab(findParentRoute as unknown as RouteLocationNormalized);
+  } else {
+    tabStore.addTab(unref(route));
+  }
+});
+
+const refreshSelectedTag = (tab: RouteLocationNormalized) => {
+  refreshPage(tab);
+};
+const closeSelectedTag = (tab: RouteLocationNormalized) => {
+  close(tab);
+};
+
+const closeOthersTags = (tab: RouteLocationNormalized) => {
+  closeOther(tab);
+};
+
+const closeAllTags = () => {
+  closeAll();
+};
 
 watch(
   () => state.visible,
@@ -97,41 +120,8 @@ watch(
     }
   }
 );
-onMounted(() => {
-  addTags();
-});
 
-var addTags = () => {
-  const { name } = currentRoute;
-  if (name) {
-    tagsviewStore.addCachedView(unref(currentRoute));
-  }
-  return false;
-};
-
-const toLastView = (visitedViews: TagView[], view: TagView) => {
-  const latestView = visitedViews.slice(-1)[0];
-  if (latestView !== undefined && latestView.fullPath !== undefined) {
-    router.push(latestView.fullPath).catch((err) => {
-      console.warn(err);
-    });
-  } else {
-    // Default redirect to the home page if there is no tags-view, adjust it if you want
-
-    if (view.name === "Dashboard") {
-      // to reload home page
-      router.push({ path: "/redirect" + view.fullPath }).catch((err) => {
-        console.warn(err);
-      });
-    } else {
-      router.push("/").catch((err) => {
-        console.warn(err);
-      });
-    }
-  }
-};
-
-const openMenu = (tag: TagView, e: MouseEvent) => {
+const openMenu = (tag: RouteLocationNormalized, e: MouseEvent) => {
   const menuMinWidth = 105;
   const offsetLeft = proxy.$el.getBoundingClientRect().left; // container margin left
   const offsetWidth = proxy.$el.offsetWidth; // container width
@@ -147,51 +137,14 @@ const openMenu = (tag: TagView, e: MouseEvent) => {
   state.selectedTag = tag;
 };
 
-const refreshSelectedTag = (view: TagView) => {
-  // store.dispatch(TagsActionTypes.ACTION_DEL_CACHED_VIEW, view);
-  const { fullPath } = view;
-  nextTick(() => {
-    router.replace({ path: "/redirect" + fullPath }).catch((err: any) => {
-      console.warn(err);
-    });
-  });
-};
-
-const closeSelectedTag = (view: TagView) => {
-  tagsviewStore.closeTab(view);
-  if (isActive(view)) {
-    toLastView(tagsviewStore.getVisitedViews, view);
-  }
-};
-
-const closeOthersTags = () => {
-  if (
-    state.selectedTag.fullPath !== currentRoute.path &&
-    state.selectedTag.fullPath !== undefined
-  ) {
-    router.push(state.selectedTag.fullPath).catch((err) => {
-      console.log(err);
-    });
-  }
-  tagsviewStore.closeOtherTabs(state.selectedTag as TagView);
-};
-
-const closeAllTags = (view: TagView) => {
-  tagsviewStore.closeAllTab();
-  if (state.affixTags.some((tag) => tag.path === currentRoute.path)) {
-    return;
-  }
-
-  toLastView(tagsviewStore.getVisitedViews, view);
-};
-
 const handleScroll = () => {
   state.closeMenu();
 };
 
-const isActive = (route: TagView) => {
+const isActive = (route: RouteLocationNormalized) => {
   return route.path === currentRoute.path;
 };
+
 const isAffix = (tag: { meta: { affix: any } }) => {
   return tag.meta && tag.meta.affix;
 };

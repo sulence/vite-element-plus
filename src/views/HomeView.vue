@@ -1,5 +1,6 @@
 <template>
   <div class="app-container">
+    <div class="" @click="handleLogin">login</div>
     <div class="test">Home</div>
     <div class="">{{ flag.id }}</div>
 
@@ -91,10 +92,13 @@
 import { ref } from "vue";
 import { ElMessage, ElMessageBox, ElNotification } from "element-plus";
 import type { Action } from "element-plus";
+import { useRoute, useRouter } from "vue-router";
 
 import { Test } from "../components/Test";
 
 import { IconSelect } from "@/components/IconSelect";
+const currentRoute = useRoute();
+const router = useRouter();
 
 let data = ref<number>(0);
 
@@ -158,6 +162,13 @@ const open6 = () => {
         message: `action: ${action}`,
       });
     },
+  });
+};
+
+const handleLogin = () => {
+  const { fullPath } = currentRoute;
+  router.replace({ path: "/redirect/test/index" }).catch((err: any) => {
+    console.warn(err);
   });
 };
 </script>

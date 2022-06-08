@@ -9,6 +9,7 @@ import { transformRouteToMenu } from "@/router/helper/menuHelper";
 import { getPermCode } from "./menu";
 
 import { getMenuList } from "@/api/menu";
+import { PageEnum } from "@/enums/pageEnum";
 
 interface TreeHelperConfig {
   id: string;
@@ -144,6 +145,40 @@ export const usePermissionStore = defineStore({
       console.log(menuList, accessedRouters);
 
       this.setMenus(menuList);
+
+      /**
+       * @description 根据设置的首页path，修正routes中的affix标记（固定首页）
+       * */
+      const patchHomeAffix = (routes: AppRouteRecordRaw[]) => {
+        if (!routes || routes.length === 0) return;
+        let homePath: string = PageEnum.BASE_HOME;
+        function patcher(routes: AppRouteRecordRaw[], parentPath = "") {
+          if (parentPath) parentPath = parentPath + "/";
+          routes.forEach((route: AppRouteRecordRaw) => {
+            const { path, children, redirect } = route;
+            const currentPath = path.startsWith("/") ? path : parentPath + path;
+            if (currentPath === homePath) {
+              if (redirect) {
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                homePath = route.redirect! as string;
+              } else {
+                route.meta = Object.assign({}, route.meta, { affix: true });
+                throw new Error("end");
+              }
+            }
+            children && children.length > 0 && patcher(children, currentPath);
+          });
+        }
+        try {
+          patcher(routes);
+        } catch (e) {
+          // 已处理完毕跳出循环
+        }
+        return;
+      };
+
+      patchHomeAffix(accessedRouters);
+
       return toRaw(accessedRouters);
     },
   },

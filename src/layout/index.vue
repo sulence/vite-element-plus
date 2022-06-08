@@ -56,8 +56,6 @@ watch(
   }
 );
 function updateMenu() {
-  console.log(asyncRouteStore.getMenus);
-
   menus.value = asyncRouteStore.getMenus;
 }
 onMounted(() => {

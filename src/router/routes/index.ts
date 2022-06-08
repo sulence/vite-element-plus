@@ -1,5 +1,7 @@
 import { PageEnum } from "@/enums/pageEnum";
+import { Layout } from "../constant";
 import { AppRouteModule, AppRouteRecordRaw } from "../types";
+import { REDIRECT_ROUTE } from "./base";
 
 const modules = import.meta.globEager("./modules/**/*.ts");
 
@@ -29,8 +31,27 @@ export const LoginRoute: AppRouteRecordRaw = {
   },
 };
 
+export const TestRoute: AppRouteRecordRaw = {
+  path: "/test",
+  name: "Test",
+  component: Layout,
+  meta: {
+    title: "测试",
+  },
+  children: [
+    {
+      path: "index",
+      name: "test-index",
+      component: () => import("@/views/HomeView.vue"),
+      meta: {
+        title: "测试首页",
+      },
+    },
+  ],
+};
+
 //需要验证权限
 export const asyncRoutes = [...routeModuleList];
 
 //普通路由 无需验证权限
-export const basicRoutes = [RootRoute, LoginRoute];
+export const basicRoutes = [RootRoute, TestRoute, LoginRoute, REDIRECT_ROUTE];

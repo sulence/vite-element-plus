@@ -82,4 +82,13 @@ const handleTree = (
 menuList = handleTree(list);
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.app-container {
+  :deep(.el-button) {
+    color: red;
+  }
+  :deep(.svg-icon) {
+    color: red;
+  }
+}
+</style>

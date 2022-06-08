@@ -1,5 +1,11 @@
 import type { AppRouteRecordRaw } from "@/router/types";
-import { REDIRECT_NAME, ErrorPage, Layout } from "@/router/constant";
+import {
+  REDIRECT_NAME,
+  ErrorPage,
+  Layout,
+  PAGE_NOT_FOUND_NAME,
+} from "@/router/constant";
+import { RouteRecordRaw } from "vue-router";
 
 // 404 on a page
 export const ErrorPageRoute: AppRouteRecordRaw = {
@@ -23,7 +29,30 @@ export const ErrorPageRoute: AppRouteRecordRaw = {
   ],
 };
 
-export const REDIRECT_ROUTE: AppRouteRecordRaw = {
+export const PAGE_NOT_FOUND_ROUTE: AppRouteRecordRaw = {
+  path: "/:path(.*)*",
+  name: PAGE_NOT_FOUND_NAME,
+  component: Layout,
+  meta: {
+    title: "ErrorPage",
+    hideBreadcrumb: true,
+    hideMenu: true,
+  },
+  children: [
+    {
+      path: "/:path(.*)*",
+      name: PAGE_NOT_FOUND_NAME,
+      component: ErrorPage,
+      meta: {
+        title: "ErrorPage",
+        hideBreadcrumb: true,
+        hideMenu: true,
+      },
+    },
+  ],
+};
+
+export const REDIRECT_ROUTE: RouteRecordRaw = {
   path: "/redirect",
   component: Layout,
   name: "RedirectTo",
@@ -36,7 +65,7 @@ export const REDIRECT_ROUTE: AppRouteRecordRaw = {
     {
       path: "/redirect/:path(.*)",
       name: REDIRECT_NAME,
-      component: () => import("@/views/HomeView.vue"),
+      component: () => import("@/views/Redirect.vue"),
       meta: {
         title: REDIRECT_NAME,
         hideBreadcrumb: true,
