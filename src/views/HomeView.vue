@@ -1,6 +1,7 @@
 <template>
   <div class="app-container">
     <div class="" @click="handleLogin">login</div>
+    <div class="" @click="handleMessage">message</div>
     <div class="test">Home</div>
     <div class="">{{ flag.id }}</div>
 
@@ -97,6 +98,10 @@ import { useRoute, useRouter } from "vue-router";
 import { Test } from "../components/Test";
 
 import { IconSelect } from "@/components/IconSelect";
+
+import { useMessage } from "@/hooks/web/useMessage";
+
+const { createMessage, notification } = useMessage();
 const currentRoute = useRoute();
 const router = useRouter();
 
@@ -170,6 +175,11 @@ const handleLogin = () => {
   router.replace({ path: "/redirect/test/index" }).catch((err: any) => {
     console.warn(err);
   });
+};
+
+const handleMessage = () => {
+  createMessage.success("你点击了通知，ID=");
+  notification.warn({ title: "Title", message: `成功删除` });
 };
 </script>
 

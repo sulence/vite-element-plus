@@ -1,14 +1,9 @@
 import { defineStore } from "pinia";
 import { RouteRecordRaw } from "vue-router";
 
-import {
-  getUserInfo,
-  GetUserInfoModel,
-  loginApi,
-  LoginParams,
-  logout,
-  UserInfo,
-} from "@/api/user";
+import { USER } from "@/api/interface";
+
+import { getUserInfo, loginApi, logout } from "@/api/user";
 import { PageEnum } from "@/enums/pageEnum";
 import { RoleEnum } from "@/enums/roleEnum";
 import { router } from "@/router";
@@ -18,7 +13,7 @@ import { isArray } from "@/utils/is";
 import { store } from "..";
 
 interface UserState {
-  userInfo: Nullable<UserInfo>;
+  userInfo: Nullable<USER.UserInfo>;
   token?: string;
   roleList: RoleEnum[];
   sessionTimeout?: boolean;
@@ -31,7 +26,7 @@ export const useUserStore = defineStore({
     // user info
     userInfo: null,
     // token
-    token: undefined,
+    token: "undefined",
     // roleList
     roleList: [],
     // Whether the login expired
@@ -61,7 +56,7 @@ export const useUserStore = defineStore({
     setSessionTimeout(flag: boolean) {
       this.sessionTimeout = flag;
     },
-    setUserInfo(info: UserInfo | null) {
+    setUserInfo(info: USER.UserInfo | null) {
       this.userInfo = info;
       this.lastUpdateTime = new Date().getTime();
       // setAuthCache(USER_INFO_KEY, info);
@@ -86,10 +81,10 @@ export const useUserStore = defineStore({
      * @description: login
      */
     async login(
-      params: LoginParams & {
+      params: USER.LoginParams & {
         goHome?: boolean;
       }
-    ): Promise<GetUserInfoModel | null> {
+    ): Promise<USER.GetUserInfoModel | null> {
       try {
         const { goHome = true, ...loginParams } = params;
         const data = await loginApi(loginParams);
@@ -102,7 +97,9 @@ export const useUserStore = defineStore({
         return Promise.reject(error);
       }
     },
-    async afterLoginAction(goHome?: boolean): Promise<GetUserInfoModel | null> {
+    async afterLoginAction(
+      goHome?: boolean
+    ): Promise<USER.GetUserInfoModel | null> {
       if (!this.getToken) return null;
       // get user info
       const userInfo = await this.getUserInfoAction();
@@ -125,7 +122,7 @@ export const useUserStore = defineStore({
       }
       return userInfo;
     },
-    async getUserInfoAction(): Promise<UserInfo | null> {
+    async getUserInfoAction(): Promise<USER.UserInfo | null> {
       if (!this.getToken) return null;
       const userInfo = await getUserInfo();
       const { roles = [] } = userInfo;

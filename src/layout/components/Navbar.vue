@@ -8,6 +8,10 @@
     />
 
     <BreadCrumb id="breadcrumb-container" class="breadcrumb-container" />
+
+    <div class="right-menu">
+      <HeaderSearch id="header-search" class="right-menu-item" />
+    </div>
   </div>
 </template>
 
@@ -15,6 +19,7 @@
 import { computed, unref } from "vue";
 import { Hamburger } from "@/components/Hamburger";
 import { BreadCrumb } from "@/components/BreadCrumb";
+import { HeaderSearch } from "@/components/HeaderSearch";
 import { useAppSetting } from "@/hooks/setting/useAppSetting";
 import { useAppStoreWithOut } from "@/store/modules/app";
 

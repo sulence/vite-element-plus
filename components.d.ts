@@ -45,6 +45,7 @@ declare module '@vue/runtime-core' {
     ElTag: typeof import('element-plus/es')['ElTag']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     Hamburger: typeof import('./src/components/Hamburger/index.vue')['default']
+    HeaderSearch: typeof import('./src/components/HeaderSearch/index.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     IconSelect: typeof import('./src/components/IconSelect/index.vue')['default']
     Loading: typeof import('element-plus/es')['ElLoadingDirective']
