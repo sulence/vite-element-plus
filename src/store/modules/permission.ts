@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { asyncRoutes, basicRoutes } from "@/router/routes";
+import { asyncRoutes } from "@/router/routes";
 
 import { store } from "@/store";
 import { toRaw, unref } from "vue";
@@ -159,7 +159,6 @@ export const usePermissionStore = defineStore({
             const currentPath = path.startsWith("/") ? path : parentPath + path;
             if (currentPath === homePath) {
               if (redirect) {
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 homePath = route.redirect! as string;
               } else {
                 route.meta = Object.assign({}, route.meta, { affix: true });

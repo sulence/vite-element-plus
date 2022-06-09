@@ -12,6 +12,7 @@ import { isString, isUrl } from "../is";
 import { formatRequestDate, joinTimestamp } from "./helper";
 import { checkStatus } from "./checkStatus";
 import { useGlobSetting } from "../../hooks/setting";
+import { useUserStoreWithOut } from "@/store/modules/user";
 
 const globSetting = useGlobSetting();
 const urlPrefix = globSetting.urlPrefix || "";
@@ -132,6 +133,23 @@ const transform: AxiosTransform = {
         config.url = config.url + params;
         config.params = undefined;
       }
+    }
+    return config;
+  },
+
+  /**
+   * @description: 请求拦截器处理
+   */
+  requestInterceptors: (config, options) => {
+    const userStore = useUserStoreWithOut();
+    // 请求之前处理config
+    const token = userStore.getToken;
+    if (token && (config as Recordable)?.requestOptions?.withToken !== false) {
+      // jwt token
+      (config as Recordable).headers.Authorization =
+        options.authenticationScheme
+          ? `${options.authenticationScheme} ${token}`
+          : token;
     }
     return config;
   },

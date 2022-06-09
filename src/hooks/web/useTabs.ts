@@ -20,7 +20,6 @@ export function useTabs(_router?: Router) {
 
   function getCurrentTab() {
     const route = unref(currentRoute);
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     return tabStore.getTabList.find(
       (item) => item.fullPath === route.fullPath
     )!;

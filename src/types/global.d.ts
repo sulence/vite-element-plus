@@ -15,6 +15,7 @@ declare global {
 
   // vue
   type PropType<T> = VuePropType<T>;
+  type Nullable<T> = T | null;
 }
 declare module "vue" {
   export type JSXComponent<Props = any> =

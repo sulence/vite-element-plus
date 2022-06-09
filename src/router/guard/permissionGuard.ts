@@ -2,26 +2,27 @@ import type { RouteRecordRaw } from "vue-router";
 import { isNavigationFailure, Router } from "vue-router";
 import { PageEnum } from "@/enums/pageEnum";
 import { usePermissionStoreWithOut } from "@/store/modules/permission";
+import { useUserStoreWithOut } from "@/store/modules/user";
 
 const LOGIN_PATH = PageEnum.BASE_LOGIN;
 
 const whitePathList = [LOGIN_PATH]; // no redirect whitelist
 
 export function createPermissionGuard(router: Router) {
+  const userStore = useUserStoreWithOut();
   const asyncRouteStore = usePermissionStoreWithOut();
   router.beforeEach(async (to, from, next) => {
     if (from.path === LOGIN_PATH && to.name === "errorPage") {
       next(PageEnum.BASE_HOME);
       return;
     }
+    const token = userStore.getToken;
 
     // Whitelist can be directly entered
     if (whitePathList.includes(to.path as PageEnum)) {
       next();
       return;
     }
-
-    const token = "132456";
 
     if (!token) {
       // You can access without permissions. You need to set the routing meta.ignoreAuth to true

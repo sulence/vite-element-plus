@@ -1,5 +1,8 @@
+import { useUserStoreWithOut } from "@/store/modules/user";
+
 export function checkStatus(status: number, msg: string): void {
   // const { t } = useI18n();
+  const userStore = useUserStoreWithOut();
   let errMessage = "";
 
   switch (status) {
@@ -10,7 +13,10 @@ export function checkStatus(status: number, msg: string): void {
     // Jump to the login page if not logged in, and carry the path of the current page
     // Return to the current page after successful login. This step needs to be operated on the login page.
     case 401:
+      userStore.setToken(undefined);
       errMessage = "用户没有权限（令牌、用户名、密码错误）!";
+
+      userStore.logout(true);
       break;
     case 403:
       errMessage = "用户得到授权，但是访问是被禁止的。!";

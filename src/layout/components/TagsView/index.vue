@@ -79,7 +79,7 @@ listenerRouteChange((route) => {
   if (name === REDIRECT_NAME || !route) {
     return;
   }
-  const { path, fullPath, meta = {} } = route;
+  const { meta = {} } = route;
   const { currentActiveMenu, hideTab } = meta as RouteMeta;
   const isHide = !hideTab ? null : currentActiveMenu;
 
@@ -230,6 +230,8 @@ const isAffix = (tag: { meta: { affix: any } }) => {
       text-align: center;
       transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
       transform-origin: 100% 50%;
+      display: inline-block;
+      line-height: 1;
       &:before {
         transform: scale(0.6);
         display: inline-block;
