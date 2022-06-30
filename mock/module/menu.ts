@@ -40,6 +40,46 @@ const list = [
     ],
   },
   {
+    path: "/directive",
+    name: "Directive",
+    component: "LAYOUT",
+    redirect: "/directive/copy",
+    meta: {
+      isRoot: true,
+      icon: "system",
+      title: "指令",
+    },
+    children: [
+      {
+        path: "copy",
+        name: "directive-copy",
+        meta: {
+          title: "复制指令",
+          icon: "system",
+        },
+        component: "/Directive/Copy",
+      },
+      {
+        path: "debounce",
+        name: "directive-debounce",
+        meta: {
+          title: "防抖指令",
+          icon: "system",
+        },
+        component: "/Directive/Debounce",
+      },
+      {
+        path: "throttle",
+        name: "directive-throttle",
+        meta: {
+          title: "节流指令",
+          icon: "system",
+        },
+        component: "/Directive/Throttle",
+      },
+    ],
+  },
+  {
     path: "/about",
     name: "About",
     component: "LAYOUT",

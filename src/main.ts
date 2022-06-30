@@ -9,6 +9,7 @@ import "@/components/SvgIcon"; // icon
 import "virtual:svg-icons-register";
 import { setupGlobDirectives } from "@/directives";
 import "element-plus/dist/index.css";
+import { debounce, throttle } from "@/utils/directive";
 
 async function initApp() {
   const app = createApp(App);
@@ -23,6 +24,9 @@ async function initApp() {
   setupRouterGuard(router);
   // Register global directive
   setupGlobDirectives(app);
+
+  app.config.globalProperties.$debounce = debounce;
+  app.config.globalProperties.$throttle = throttle;
 
   app.mount("#app");
 }
